@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="site.css" type="text/css" />
+    <title>Bethany's Pie Shop</title>
+    <style>
+      @media only screen and (min-width: 768px) {
+        article {
+          width: 500px;
+        }
+      }
+      .input-group {
+        padding: 0;
+        margin: 0 0 20px 0;
+      }
+      .input-group input,
+      .input-group textarea,
+      .input-group select {
+        padding: 10px;
+        border: solid 1px #aaa;
+        border-radius: 2px;
+      }
+      .input-group select {
+        width: 100%;
+      }
+      .input-group input,
+      .input-group textarea {
+        width: calc(100% - 22px);
+      }
+      label {
+        font-weight: 600;
+      }
+      input[type="reset"] {
+        background-color: lightblue;
+        border: solid 1px #aaa;
+        border-radius: 3px;
+        padding: 7px 10px;
+      }
+      input[type="submit"] {
+        border: solid 1px #aaa;
+        border-radius: 3px;
+        padding: 7px 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="pies.html">Pies</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <aside><img src="images/logo.png" alt="Bethany's Pie Shop" /></aside>
+      <article>
+        <h1>Order</h1>
+        <div class="pie">
+          <img src="" alt="" />
+          <div class="columns">
+            <div class="title"></div>
+            <div class="price"></div>
+          </div>
+          <p class="desc"></p>
+        </div>
+        <form action="" method="POST" id="pie-form">
+          <input type="hidden" name="pie-order" id="pie-order" />
+          <input type="hidden" name="location" id="location" />
+          <div class="input-group">
+            <div><label for="first-name">First Name</label></div>
+            <div><input type="text" name="first-name" id="first-name" /></div>
+          </div>
+          <div class="input-group">
+            <div><label for="last-name">Last Name</label></div>
+            <div><input type="text" name="last-name" id="last-name" /></div>
+          </div>
+          <div class="input-group">
+            <div><label for="address">Address</label></div>
+            <div><input type="text" name="address" id="address" /></div>
+          </div>
+          <div class="input-group">
+            <div><label for="state">State</label></div>
+            <div>
+              <select name="state" id="state">
+                <option value="" selected>(Select One)</option>
+                <option value="Tennessee">Tennessee</option>
+                <option value="South Carolina">South Carolina</option>
+                <option value="Florida">Florida</option>
+              </select>
+            </div>
+          </div>
+          <div class="input-group">
+            <div><label for="postal-code">Postal Code</label></div>
+            <div><input type="text" name="postal-code" id="postal-code" /></div>
+          </div>
+          <div class="input-group">
+            <div><label for="comments">Comments</label></div>
+            <div>
+              <textarea
+                name="comments"
+                id="comments"
+                cols="30"
+                rows="10"
+              ></textarea>
+            </div>
+          </div>
+          <input type="reset" value="Reset" />
+          <input type="submit" value="Order" />
+        </form>
+      </article>
+    </main>
+    <footer>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="pies.html">Pies</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
+    </footer>
+  </body>
+  <script>
+    window.addEventListener("DOMContentLoaded", (e) => {
+      let locationBox = document.querySelector("#location");
+      let location = {
+        latitude: "unknown",
+        longitude: "unknown",
+      };
+
+      window.navigator.geolocation.getCurrentPosition(
+        (position) => {
+          location = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          };
+          locationBox.value = JSON.stringify(location);
+          console.log(locationBox.value);
+        },
+        (error) => {
+          locationBox.value = JSON.stringify(location);
+          console.log(locationBox.value);
+        }
+      );
+
+      const order = localStorage.getItem("order");
+
+      if (order) {
+        const orderInput = document.querySelector("#pie-order");
+        orderInput.value = order;
+
+        const pie = document.querySelector(".pie");
+        const pieOrder = JSON.parse(order);
+
+        const title = pie.querySelector(".title");
+        title.innerText = pieOrder.title;
+
+        const price = pie.querySelector(".price");
+        price.innerText = pieOrder.price;
+
+        const desc = pie.querySelector(".desc");
+        desc.innerText = pieOrder.desc;
+
+        const img = pie.querySelector("img");
+        img.setAttribute("src", `images/${pieOrder.id}.png`);
+        img.setAttribute("alt", pieOrder.title);
+      }
+    });
+
+    window.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const inputs = document.querySelectorAll("input");
+      let state = document.getElementById("state");
+      const data = {
+        pieOrder: JSON.parse(document.getElementById("pie-order").value),
+        location: JSON.parse(document.getElementById("location").value),
+        firstName: document.getElementById("first-name").value,
+        lastName: document.getElementById("last-name").value,
+        address: document.getElementById("address").value,
+        state: state.options[state.selectedIndex].value,
+        postalCode: document.getElementById("postal-code").value,
+        comments: document.getElementById("comments").value,
+      };
+      console.log(data);
+      setTimeout(() => {
+        const url = window.location.href.replace("order.html", "index.html");
+        window.location.href = url;
+      }, 30000);
+    });
+  </script>
+</html>
